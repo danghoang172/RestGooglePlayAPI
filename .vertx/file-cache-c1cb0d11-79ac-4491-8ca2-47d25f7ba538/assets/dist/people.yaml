@@ -1,0 +1,23 @@
+swagger: '2.0'
+
+info:
+  version: '1'
+  title: Reference check....
+basePath: /api-doc/
+paths:
+  /People:
+      get:
+        responses:
+          200:
+            description: OK
+            schema:
+              $ref: '#/definitions/infor'
+
+definitions:
+  dummy:
+    type: string
+  infor:
+      type: object
+      properties:
+        time:
+          $ref: 'swagger.yaml#/definition/Owner'

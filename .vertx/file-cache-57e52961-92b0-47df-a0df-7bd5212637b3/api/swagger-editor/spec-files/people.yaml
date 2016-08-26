@@ -1,0 +1,32 @@
+swagger: '2.0'
+
+info:
+  version: '1'
+  title: Reference check
+basePath: /api-doc/
+
+definitions:
+ Dog:
+    Owner:
+      title: "A Dog owner"
+      properties:
+        person:
+          $ref: "#/Person"
+        since:
+          type: string
+          format: date-time
+
+    Person:
+      title: "Somebody"
+      properties:
+        name:
+          type: string
+        address:
+          $ref: 'address.yaml'
+
+paths:
+  /:
+    get:
+      responses:
+        200:
+          description: OK
