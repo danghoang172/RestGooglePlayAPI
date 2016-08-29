@@ -1,0 +1,22 @@
+swagger: '2.0'
+
+info:
+  version: '1'
+  title: Reference check
+basePath: /api-doc/
+
+definitions:
+  Address:
+    title: An address
+    properties:
+      street:
+        type: string
+      number:
+        type: int
+
+paths:
+  /:
+    get:
+      responses:
+        200:
+          description: OK

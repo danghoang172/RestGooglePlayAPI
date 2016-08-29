@@ -1,0 +1,207 @@
+swagger: '2.0'
+
+info:
+  version: '1.0'
+  title: APK Downloader 
+  description: A sample REST API that help user to download .apk file from google store using on browser. For more infomation, please check out api-doc
+  termsOfService: http://localhost:8080/terms/
+consumes:
+  - application/json
+produces:
+  - application/json
+basePath: /api-doc/
+paths:
+  /login:
+      
+      post:
+        description: Login and set token for user to download
+        parameters:
+        - name: user
+          in: body
+          description: User's info object required to login
+          required: true
+          schema:
+            $ref: '#/definitions/user'
+        consumes:
+          - application/json
+        produces:
+          - text/html
+        responses:
+          200:
+            description: OK
+          400:
+            description: Wrong form or incorrect pair of username, password or android id error
+            schema:
+              $ref: '#/definitions/errorModel'
+          default:
+            description: unexpected error
+            schema:
+              $ref: '#/definitions/errorModel'
+  /search/{name}:
+      get:
+        parameters:
+        - name: name
+          in: path
+          description: Name fetch to get list of related package. For more information for how to get the name of an app, please read the guide.
+          required: true
+          type: string
+        responses:
+          200:
+            description: OK
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/basicDetails'
+          403:
+            description: Access Forbidden, please check if you logged in.
+            schema:
+              $ref: '#/definitions/errorModel'
+          default:
+            description: unexpected error
+            schema:
+              $ref: '#/definitions/errorModel'
+  /detail/{packageName}:
+    get:
+        parameters:
+        - name: packageName
+          in: path
+          description: Package name fetch to get information. For more information for how to get the name of an app, please read the guide.
+          required: true
+          type: string
+        responses:
+          200:
+            description: OK
+            schema:
+              $ref: '#/definitions/package'
+          403:
+            description: Access Forbidden, please check if you logged in.
+            schema:
+              $ref: '#/definitions/errorModel'
+          default:
+            description: unexpected error
+            schema:
+              $ref: '#/definitions/errorModel'
+  /download/{packageName}:
+      get:
+        parameters:
+        - name: packageName
+          in: path
+          description: Package name fetch to download
+          required: true
+          type: string
+        responses:
+          200:
+            description: OK
+            schema:
+              $ref: '#/definitions/package'
+          403:
+            description: Access Forbidden, please check if you logged in.
+            schema:
+              $ref: '#/definitions/errorModel'
+          default:
+            description: unexpected Error
+            schema:
+              $ref: '#/definitions/errorModel'
+
+definitions:
+  package:
+    type: object
+    required:
+      - basicDetails
+      - imageURLS
+      - ratingDetails
+    properties:
+      basicDetails:
+        $ref: '#/definitions/basicDetails'
+      imageURLS:
+        type: array
+        items:
+          type: string
+      ratingDetails:
+        $ref: '#/definitions/ratingDetails'
+  user:
+    type: object
+    required:
+      - email
+      - password
+      - androidID
+      
+    properties:
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+        format: password
+      androidID:
+        type: string
+  
+  
+  basicDetails:
+    type: object
+    required:
+      - title
+      - creator
+      - categories
+      - descriptions
+      - totalRating
+    properties:
+      title:
+        description: name of app
+        type: string
+      creator:
+        description: creator of app
+        type: string
+      categories:
+        type: array
+        items:
+          type: string
+      descriptions:
+        description: description
+        type: string
+      totalRating:
+        type: integer
+        format: int64
+        
+  ratingDetails:
+    type: object
+    required:
+      - star5
+      - star4
+      - star3
+      - star2
+      - star1
+      - averageRating
+    properties:
+      star5:
+        description: 5 stars rating number of app
+        type: integer
+        format: int64
+      star4:
+        type: integer
+        format: int64
+      star3:
+        type: integer
+        format: int64
+      star2:
+        type: integer
+        format: int64
+      star1:
+        type: integer
+        format: int64
+      averageRating:
+        type: number
+        format: float
+        
+          
+  errorModel:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string

@@ -1,0 +1,265 @@
+swagger: '2.0'
+
+info:
+  version: '1.0'
+  title: APK Downloader 
+  description: A sample REST API that help user to download .apk file from google store using on browser. For more infomation, please check out api-doc
+  termsOfService: http://localhost:8080/terms/
+consumes:
+  - application/json
+produces:
+  - application/json
+basePath: /api/store
+paths:
+  /login:
+      
+      post:
+        description: Login and set token for user to download
+        parameters:
+        - name: user
+          in: body
+          description: User's info object required to login
+          required: true
+          schema:
+            $ref: '#/definitions/user'
+        consumes:
+          - application/json
+        produces:
+          - text/html
+        responses:
+          200:
+            description: OK
+          400:
+            description: Wrong form or incorrect pair of username, password or android id error
+            schema:
+              $ref: '#/definitions/errorModel'
+          default:
+            description: unexpected error
+            schema:
+              $ref: '#/definitions/errorModel'
+  /search/{name}:
+      get:
+        parameters:
+        - name: name
+          in: path
+          description: Name fetch to get list of related package. For more information for how to get the name of an app, please read the guide.
+          required: true
+          type: string
+        responses:
+          200:
+            description: OK
+            examples: 
+              application/json: |
+                  [
+                    {
+                      "title": "Facebook",
+                      "creator": "Facebook",
+                      "description": "",
+                      "totalRating": 46382711,
+                      "category": []
+                    },
+                    {
+                      "title": "Messenger",
+                      "creator": "Facebook",
+                      "description": "",
+                      "totalRating": 29365266,
+                      "category": []
+                    },
+                    {
+                      "title": "Facebook at Work",
+                      "creator": "Facebook",
+                      "description": "",
+                      "totalRating": 94754,
+                      "category": []
+                    },
+                  ]
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/basicDetails'
+          403:
+            description: Access Forbidden, please check if you logged in.
+            schema:
+              $ref: '#/definitions/errorModel'
+          default:
+            description: unexpected error
+            schema:
+              $ref: '#/definitions/errorModel'
+  /detail/{packageName}:
+    get:
+        parameters:
+        - name: packageName
+          in: path
+          description: Package name fetch to get information. For more information for how to get the name of an app, please read the guide.
+          required: true
+          type: string
+        responses:
+          200:
+            description: OK
+            examples: 
+              application/json: |
+                {
+                  "ratingDetails": {
+                    "fiveStar": 26465182,
+                    "fourStar": 7327678,
+                    "threeStar": 4293508,
+                    "twoStar": 2220419,
+                    "oneStar": 6132977,
+                    "averageRating": 3.9856138
+                  },
+                  "imageDetails": {
+                    "1": "https://lh3.googleusercontent.com/ZZPdzvlpK9r_Df9C3M7j1rNRi7hhHRvPhlklJ3lfi5jk86Jd1s0Y5wcQ1QgbVaAP5Q",
+                    "2": "https://lh4.ggpht.com/3RG_Y8JPK0Hcyui9OcapiONP_aDWKTRZ50wqZW_wbyOF0FamAYEYZfMTW9Cs1OT1kA",
+                    "3": "https://lh6.ggpht.com/uxLXvxuncWOm2mgU3ChtdGZ0eMp_WJTD4xrVxAKqCJMiR5ibaBbw-VUPJPjcGiqIDRbm",
+                    "4": "https://lh3.ggpht.com/N7B7AVDDD0577crgHxHHo15uCkjSr3oimEwZWhF-VVxNYhRMIHd2eoI14WfuTHfMmtNC",
+                    "5": "https://lh6.ggpht.com/c_pfo3A3fQh40udcyhdgGIVsBa_GB9A09O642Vlwi6ka4fqwyT9044pzU-jF_rjb4VX_",
+                    "6": "https://lh5.ggpht.com/KqUgPKrZYuVa_AAOLtR0URf_8pJ_lX6au7UH2pcHzs7G3eLL9Vt7hAk83JgkqVMBIQ"
+                  },
+                  "appBasicDetails": {
+                    "title": "Facebook",
+                    "creator": "Facebook",
+                    "description": "Keeping up with friends is faster than ever.<p>• See what friends are up to<br>• Share updates, photos and videos<br>• Get notified when friends like and comment on your posts<br>• Play games and use your favorite apps<p>Now you can get early access to the next version of Facebook for Android by becoming a beta tester. Learn how to sign up, give feedback and leave the program in our Help Center: http://on.fb.me/133NwuP <br>Sign up directly here: <br>http://play.google.com/apps/testing/com.facebook.katana<p>Problems downloading or installing the app? See http://bit.ly/GPDownload1<br>Still need help? Please tell us more about the issue. http://bit.ly/invalidpackage<p>Facebook is only available for users age 13 and over.<br>Terms of Service: http://m.facebook.com/terms.php.",
+                    "totalRating": 46445331,
+                    "category": [
+                      "SOCIAL"
+                    ]
+                  }
+                }
+                     
+      
+            schema:
+              $ref: '#/definitions/package'
+            
+          403:
+            description: Access Forbidden, please check if you logged in.
+            schema:
+              $ref: '#/definitions/errorModel'
+          default:
+            description: unexpected error
+            schema:
+              $ref: '#/definitions/errorModel'
+  /download/{packageName}:
+      get:
+        parameters:
+        - name: packageName
+          in: path
+          description: Package name fetch to download
+          required: true
+          type: string
+        responses:
+          200:
+            description: OK
+            schema:
+              $ref: '#/definitions/package'
+          403:
+            description: Access Forbidden, please check if you logged in.
+            schema:
+              $ref: '#/definitions/errorModel'
+          default:
+            description: unexpected Error
+            schema:
+              $ref: '#/definitions/errorModel'
+
+definitions:
+  package:
+    type: object
+    required:
+      - basicDetails
+      - imageURLS
+      - ratingDetails
+    properties:
+      basicDetails:
+        $ref: '#/definitions/basicDetails'
+      imageURLS:
+        type: array
+        items:
+          type: string
+      ratingDetails:
+        $ref: '#/definitions/ratingDetails'
+  user:
+    
+    type: object
+    required:
+      - email
+      - password
+      - androidID
+      
+    properties:
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+        format: password
+      androidID:
+        type: string
+  
+  
+  basicDetails:
+    type: object
+    required:
+      - title
+      - creator
+      - categories
+      - descriptions
+      - totalRating
+    properties:
+      title:
+        description: name of app
+        type: string
+      creator:
+        description: creator of app
+        type: string
+      categories:
+        type: array
+        items:
+          type: string
+      descriptions:
+        description: description
+        type: string
+      totalRating:
+        type: integer
+        format: int64
+        
+  ratingDetails:
+    type: object
+    required:
+      - star5
+      - star4
+      - star3
+      - star2
+      - star1
+      - averageRating
+    properties:
+      star5:
+        description: 5 stars rating number of app
+        type: integer
+        format: int64
+      star4:
+        type: integer
+        format: int64
+      star3:
+        type: integer
+        format: int64
+      star2:
+        type: integer
+        format: int64
+      star1:
+        type: integer
+        format: int64
+      averageRating:
+        type: number
+        format: float
+        
+          
+  errorModel:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
